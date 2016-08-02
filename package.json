@@ -1,6 +1,6 @@
 {
   "name": "collapse-html-whitespaces-loader",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Riim/collapse-html-whitespaces-loader#readme",
   "dependencies": {
+    "loader-utils": "^0.2.15",
     "parse5": "^2.1.5",
     "walk5": "^0.1.0"
   }

@@ -1,5 +1,6 @@
 var parse5 = require('parse5');
 var walk5 = require('walk5');
+var loaderUtils = require('loader-utils');
 
 var notProcessedTags = Object.create(null);
 notProcessedTags.script = true;
@@ -10,14 +11,22 @@ notProcessedTags.textarea = true;
 module.exports = function(content) {
 	this.cacheable();
 
+	var query = loaderUtils.parseQuery(this.query);
 	var fragment = parse5.parseFragment(content);
 
-	walk5.walk(fragment, function(node) {
-		var nodeName = node.nodeName;
+	var skipTags = notProcessedTags;
 
-		if (nodeName == '#text') {
+	if (query.skip) {
+		skipTags = query.skip.split(',').reduce(function(skipTags, tagName) {
+			skipTags[tagName] = true;
+			return skipTags;
+		}, Object.create(skipTags));
+	}
+
+	walk5.walk(fragment, function(node) {
+		if (node.nodeName == '#text') {
 			node.value = node.value.replace(/\s+/g, ' ');
-		} else if (nodeName in notProcessedTags) {
+		} else if (node.hasOwnProperty('tagName') && node.tagName in skipTags) {
 			return false;
 		}
 	});
